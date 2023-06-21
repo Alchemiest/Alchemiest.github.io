@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        机器学习算法——AdaBoost与GBDT模型 | 科学炼丹
+      
+    </title>
+    <meta name="description" content="由Hexo及华为云驱动"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+
+  <meta name="generator" content="Hexo 6.3.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/ability_DA">数据分析</a>
+            
+              <a class="nav-menu-item" href="/ability_DL">深度学习</a>
+            
+              <a class="nav-menu-item" href="/award">学习经历</a>
+            
+              <a class="nav-menu-item" href="/honor">学术成就</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">机器学习算法——AdaBoost与GBDT模型</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="post-tag">#机器学习</a>
+  
+    <a href="/tags/%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B/" class="post-tag">#分类模型</a>
+  
+    <a href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/" class="post-tag">#集成学习模型</a>
+  
+    <a href="/tags/GBDT%E6%A8%A1%E5%9E%8B/" class="post-tag">#GBDT模型</a>
+  
+    <a href="/tags/AdaBoost%E6%A8%A1%E5%9E%8B/" class="post-tag">#AdaBoost模型</a>
+  
+
+
+          <span class="post-date">2020-07-20</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#AdaBoost%E6%A8%A1%E5%9E%8B"><span class="toc-text">AdaBoost模型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-AdaBoost%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86"><span class="toc-text">1.AdaBoost模型原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-AdaBoost%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E4%BF%A1%E7%94%A8%E5%8D%A1%E7%B2%BE%E5%87%86%E8%90%A5%E9%94%80%E6%A8%A1%E5%9E%8B"><span class="toc-text">2.AdaBoost模型应用步骤——信用卡精准营销模型</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#GBDT%E6%A8%A1%E5%9E%8B"><span class="toc-text">GBDT模型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-GBDT%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86"><span class="toc-text">1.GBDT模型原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-GBDT%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E4%BA%A7%E5%93%81%E5%AE%9A%E4%BB%B7%E6%A8%A1%E5%9E%8B"><span class="toc-text">2.GBDT模型应用步骤——产品定价模型</span></a></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>摘要: 本节内容主要讲述集成学习方向的模型，具体内容包括1. AdaBoost模型；2. GBDT模型</p>
+<span id="more"></span>
+<h1 id="AdaBoost模型"><a href="#AdaBoost模型" class="headerlink" title="AdaBoost模型"></a>AdaBoost模型</h1><h2 id="1-AdaBoost模型原理"><a href="#1-AdaBoost模型原理" class="headerlink" title="1.AdaBoost模型原理"></a>1.AdaBoost模型原理</h2><ol>
+<li>Adaboost算法的核心思想是调整错误样本的权重,进而迭代升级</li>
+<li>AdaBoost算法逻辑:<ol>
+<li>每轮迭代之间的链接的逻辑是按照上一轮的结果,调整这一次迭代时的样本的权重,在上一轮单中被错误分类的样本会在这一轮当中赋予更高的权重</li>
+<li>弱学习器之间组合的逻辑是强学习器&#x3D;所有弱学习器的加权之和</li>
+</ol>
+</li>
+<li>Adaboost算法以一种高度自适应的方式<strong>按顺序</strong>训练弱学习器.eg:针对分类问题,AdaBoost会根据前一次的分类效果调整数据的权重,在上一个弱学习器中分类错误的样本的权重会在下一个弱学习器中增加,分类正确的样本的权重则会减少,并且在每一轮迭代时会向模型中加入一个新的弱学习器.不断重复调整权重和训练弱学习器,直到误分类数低于预设值或迭代次数达到指定最大值,最终得到一个强学习器.</li>
+<li>AdaBoost算法原理步骤概述(本例为单变量的AdaBoost分类算法)<br> 1. 输入训练集数据,x为特征<strong>变量</strong>,y为目标变量(此时仅包含一个值,若x为多变量时,则为X为特征<strong>向量</strong>,y为目标变量)<br> 2. 第一个模型:<br>     1. <strong>所有样本$w_{ij}$权重相等</strong><br>     2. 按照切分后误差率最小的方式进行第一次切分,决定划分标准<br>     3. 引入第一个弱学习器为决策树,决策树第一层的决策标准即为2.步中的划分标准<br>     4. 按照这个弱学习器划分后的<strong>误差率</strong>计算这个弱学习器的系数<br>     5. 强学习器为所有弱学习器的加权之和(这里的权就是第4.步中的弱学习器的系数)<br> 3. 第i个模型$(i\ne1)$<br>     1. <strong>按照错误率大小更新样本权重</strong><br>     2. 第2.-5.步与第一轮模型相同<br> 4. 模型参数详见书上<br> 5. 补充知识点:正则化项<br>     1. 为了防止AdaBoost算法过拟合,可以向模型当中加入正则化项——每个弱学习器的权重缩减系数v,又称为learning rate(学习率)<br>     2. 权重缩减系数v的取值范围为$(0, 1]$.取值较小意味着要达到一定的误分类数或学习效果,需要的迭代次数更多,需要训练的弱学习器更多;取值较大意味着要获得相同的学习效果,需要的迭代次数较少,需要训练的弱学习器更少.<br> 6. <strong>注:AdaBoost算法注意事项</strong><br>     1. AdaBoost的决策树的建树标准是误差率而不是常见的[[决策树#1 决策树原理|分类决策树的三种标准以及回归决策树的MSE]]<br>     2. 样本权重用在计算误差率当中,误差率用在计算弱学习器的权重当中,弱学习器的权重又用在下一轮更新样本权重当中,以此循环<br>     3. 注意,整个学习的过程当中实际上只涉及了两个“权重”(误差率就是误差率,不是“权重”)<br>         1. 弱学习器的“权重”:这里的权重不一定是叫权重是因为弱学习器的系数是有可能大于1的,所以弱学习器的“权重”相比较而言更适合叫弱学习器的系数<br>         2. 样本权重<br>         3. 注意:这两个“权重”按照错误率的变化是相反的:弱学习器越准确,其这一轮的系数越大;但是一个样本被错分了,即其错误率越高,则这个样本在下一轮的样本权重越大</li>
+</ol>
+<h2 id="2-AdaBoost模型应用步骤——信用卡精准营销模型"><a href="#2-AdaBoost模型应用步骤——信用卡精准营销模型" class="headerlink" title="2.AdaBoost模型应用步骤——信用卡精准营销模型"></a>2.AdaBoost模型应用步骤——信用卡精准营销模型</h2><ol>
+<li>读取数据</li>
+<li>提取特征向量和目标变量</li>
+<li>划分训练集与测试集(正常用train_test_split()函数来进行随机划分)</li>
+<li>模型搭建: 用训练集来喂模型</li>
+<li>模型准确度检验: 用用测试集喂模型得出的结果与y_test做比较,得出训练器的准确度,越准确越好</li>
+</ol>
+<hr>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.读取数据</span></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">df = pd.read_excel(<span class="string">&#x27;信用卡精准营销模型.xlsx&#x27;</span>)</span><br><span class="line">df.head()</span><br><span class="line"></span><br><span class="line"><span class="comment">#2.提取特征向量和目标变量</span></span><br><span class="line">X = df.drop(columns=<span class="string">&#x27;响应&#x27;</span>)</span><br><span class="line">y = df[<span class="string">&#x27;响应&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">#3.划分训练集与测试集</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#4.模型训练及搭建</span></span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> AdaBoostClassifier</span><br><span class="line">clf = AdaBoostClassifier(random_state=<span class="number">123</span>)</span><br><span class="line">clf.fit(X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="comment">#5.模型预测及精确度评估</span></span><br><span class="line">y_pred = clf.predict(X_test)</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score</span><br><span class="line">score = accuracy_score(y_pred, y_test)</span><br><span class="line"><span class="built_in">print</span>(score)</span><br><span class="line">y_pred_proba = clf.predict_proba(X_test)</span><br><span class="line"><span class="comment"># 绘制ROC曲线</span></span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> roc_curve</span><br><span class="line">fpr, tpr, thres = roc_curve(y_test.values, y_pred_proba[:,<span class="number">1</span>])</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">plt.plot(fpr, tpr)</span><br><span class="line">plt.show()</span><br><span class="line"><span class="comment"># 查看AUC值</span></span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> roc_auc_score</span><br><span class="line">score = roc_auc_score(y_test, y_pred_proba[:,<span class="number">1</span>])</span><br><span class="line"><span class="built_in">print</span>(score)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="GBDT模型"><a href="#GBDT模型" class="headerlink" title="GBDT模型"></a>GBDT模型</h1><h2 id="1-GBDT模型原理"><a href="#1-GBDT模型原理" class="headerlink" title="1.GBDT模型原理"></a>1.GBDT模型原理</h2><ol>
+<li>GBDT算法核心:将损失函数的负梯度作为残差的近似值,不断使用残差迭代和拟合回归树,最终生成强学习器.</li>
+<li>AdaBoost算法与GBDT算法对比:AdaBoost算法是调整权重,而GBDT算法是拟合残差来生成最后的强学习器.</li>
+<li>GBDT算法原理步骤概述(本例为单变量的GBDT回归算法)<ol>
+<li>输入训练集数据,x为特征<strong>变量</strong>,y为目标变量(此时仅包含一个值,若x为多变量时,则为X为特征<strong>向量</strong>,y为目标变量)</li>
+<li>第一个模型:<ol>
+<li>首先初始化$f_0(x)&#x3D;0$,然后构造第一个回归决策树模型$f_1(x)&#x3D;0$,其实也就是$T_1(x)&#x3D;0$</li>
+<li>寻找合适切分点:按照MSE最小的方式进行划分(这里的决策树的划分标准依旧是[[决策树#1 决策树原理|回归决策树:MSE,分类决策树:三种决策树对应的三种划分方式]])</li>
+<li>计算每个节点的预测值,后计算残差值</li>
+</ol>
+</li>
+<li>第i个模型$(i\ne1)$<ol>
+<li>从第2轮开始,每一轮的特征变量仍旧为x,但是<strong>目标变量为上一轮的残差值(残差值&#x3D;节点预测值-目标变量实际值)</strong></li>
+<li>构建第i个决策树,以MSE进行划分(<strong>实际上计算MSE当中用到的$y_i$与$f(x_i)$均已不再是真正的“y”,而是上一层的残差!$y_i$是上一轮的残差值,$f(x_i)$是上一轮的残差值在这一轮的此划分标准下的拟合值</strong>)</li>
+</ol>
+</li>
+<li>集成模型:所有的学习器直接求和</li>
+<li>模型参数详见书上</li>
+<li>补充知识点:损失函数:相见书上P221</li>
+<li><strong>注:GBDT算法注意事项</strong><ol>
+<li>GBDT算法的本质仍旧是决策树</li>
+<li>GBDT算法中与决策树的异同<ol>
+<li>相同点<ol>
+<li>GBDT算法的第一轮是完完全全的正常决策树</li>
+<li>GBDT算法的每一层的划分标注&#x2F;决策标准仍旧是传统的决策树的决策标准</li>
+</ol>
+</li>
+<li>不同点<ol start="3">
+<li><strong>GBDT算法从第二轮开始,特征变量仍旧是x,但是目标变量就已经不是y了,每一轮的目标变量都是上一轮的残差值</strong></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="2-GBDT模型应用步骤——产品定价模型"><a href="#2-GBDT模型应用步骤——产品定价模型" class="headerlink" title="2.GBDT模型应用步骤——产品定价模型"></a>2.GBDT模型应用步骤——产品定价模型</h2><ol>
+<li>读取数据</li>
+<li>提取特征向量和目标变量</li>
+<li>划分训练集与测试集(正常用train_test_split()函数来进行随机划分)</li>
+<li>模型搭建: 用训练集来喂模型</li>
+<li>模型准确度检验: 用用测试集喂模型得出的结果与y_test做比较,得出训练器的准确度,越准确越好</li>
+</ol>
+<hr>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#1.读取数据</span></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">df = pd.read_excel(<span class="string">&#x27;产品定价模型.xlsx&#x27;</span>)</span><br><span class="line">df.head()</span><br><span class="line"><span class="comment">#2.分类型文本变量处理</span></span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> LabelEncoder</span><br><span class="line">le = LabelEncoder()</span><br><span class="line">df[<span class="string">&#x27;类别&#x27;</span>] = le.fit_transform(df[<span class="string">&#x27;类别&#x27;</span>]) <span class="comment"># 处理类别</span></span><br><span class="line">df[<span class="string">&#x27;纸张&#x27;</span>] = le.fit_transform(df[<span class="string">&#x27;纸张&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment">#3.提取特征变量和目标变量</span></span><br><span class="line">X = df.drop(columns=<span class="string">&#x27;价格&#x27;</span>)</span><br><span class="line">y = df[<span class="string">&#x27;价格&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">#4.划分训练集与测试集</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#5.模型训练及搭建</span></span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> GradientBoostingRegressor</span><br><span class="line">model = GradientBoostingRegressor(random_state=<span class="number">123</span>)</span><br><span class="line">model.fit(X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="comment">#6.模型预测及精确度评估</span></span><br><span class="line">y_pred = clf.predict(X_test)</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score</span><br><span class="line">score = accuracy_score(y_pred, y_test)</span><br><span class="line"><span class="built_in">print</span>(score)</span><br><span class="line">y_pred_proba = clf.predict_proba(X_test)</span><br><span class="line"><span class="comment"># 绘制ROC曲线</span></span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> roc_curve</span><br><span class="line">fpr, tpr, thres = roc_curve(y_test.values, y_pred_proba[:,<span class="number">1</span>])</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">plt.plot(fpr, tpr)</span><br><span class="line">plt.show()</span><br><span class="line"><span class="comment"># 查看AUC值</span></span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> roc_auc_score</span><br><span class="line">score = roc_auc_score(y_test, y_pred_proba[:,<span class="number">1</span>])</span><br><span class="line"><span class="built_in">print</span>(score)</span><br></pre></td></tr></table></figure>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+      <div class="like-author">
+  <input type="checkbox" id="likeCode" />
+  <div class="author-face">
+    <img height="100px"
+         width="100px"
+         id="front-face"
+         alt="author face"
+         src="/images/IMG_5172.JPG# 头像图片"/>
+    <img height="100px"
+         width="100px"
+         id="back-face"
+         alt="like code"
+         src="/images/IMG_3538.jpg# 支付码图片"/>
+  </div>
+  <div class="like-text">“请作者喝杯咖啡”</div>
+  <label for="likeCode" class="like-btn">
+    <svg viewBox="0 0 1024 1024"
+         width="20px"
+         style="margin-right: 10px"
+         height="20px">
+      <path d="M466.88 908.96L113.824 563.296a270.08 270.08 0 0 1 0-387.392c108.8-106.56 284.896-106.56 393.696 0 1.504 1.472 2.976 2.944 4.448 4.48 1.472-1.536 2.944-3.008 4.448-4.48 108.8-106.56 284.896-106.56 393.696 0a269.952 269.952 0 0 1 34.016 347.072l-387.392 385.6a64 64 0 0 1-89.92 0.384z" p-id="13650" fill="#ee4242"/>
+    </svg>
+    喜欢作者
+  </label>
+</div>
+
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2020/08/20/%E6%A8%A1%E5%9E%8B%E6%80%A7%E8%83%BD%E6%A3%80%E9%AA%8C/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>机器学习算法——模型性能度量</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2020/06/20/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97%E6%A8%A1%E5%9E%8B/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      机器学习算法——随机森林模型
+    </a>
+  
+</div>
+
+    
+      <div class="related-post">
+  <div class="related__head">
+  
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="post-tag">#机器学习</a>
+  
+    <a href="/tags/%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B/" class="post-tag">#分类模型</a>
+  
+    <a href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/" class="post-tag">#集成学习模型</a>
+  
+    <a href="/tags/GBDT%E6%A8%A1%E5%9E%8B/" class="post-tag">#GBDT模型</a>
+  
+    <a href="/tags/AdaBoost%E6%A8%A1%E5%9E%8B/" class="post-tag">#AdaBoost模型</a>
+  
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/2020/06/20/随机森林模型/" title="机器学习算法——随机森林模型" rel="bookmark">机器学习算法——随机森林模型</a></div></div><div class="null-item"><div class="null-title"><a href="/2021/01/20/决策树/" title="机器学习算法——决策树" rel="bookmark">机器学习算法——决策树</a></div></div><div class="null-item"><div class="null-title"><a href="/2020/11/20/朴素贝叶斯模型/" title="机器学习算法——朴素贝叶斯模型" rel="bookmark">机器学习算法——朴素贝叶斯模型</a></div></div><div class="null-item"><div class="null-title"><a href="/2021/01/20/K近邻算法/" title="机器学习算法——K近邻算法" rel="bookmark">机器学习算法——K近邻算法</a></div></div><div class="null-item"><div class="null-title"><a href="/2022/02/20/AlexNet/" title="深度学习——卷积神经网络——AlexNet" rel="bookmark">深度学习——卷积神经网络——AlexNet</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">海</div><div class="matts">内</div><div class="matts">存</div><div class="matts">知</div><div class="matts">己</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">天</div><div class="matts">涯</div><div class="matts">若</div><div class="matts">比</div><div class="matts">邻</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">Theme Tranquility</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:jordanlee@stumail.hbu.edu.cn?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/Alchemiest">Alchemiest</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-wx.svg"/>
+                    <a class="foot-link" href="">松果篮</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/PNG图像 2.PNG"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://b23.tv/qb0poEj">科学炼丹</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:jordanlee@stumail.hbu.edu.cn">jordanlee@stumail.hbu.edu.cn</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="http://example.com">科学炼丹</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"Alchemiest# MUST HAVE, Your Github Username","admin":null,"repo":"https://github.com/Alchemiest/Alchemiest.github.io# MUST HAVE, The name of the repo you use to store Gitment comments","clientID":"科学炼丹# MUST HAVE, Github client id for the Gitment","clientSecret":null,"distractionFreeMode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  param.id = location.pathname
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

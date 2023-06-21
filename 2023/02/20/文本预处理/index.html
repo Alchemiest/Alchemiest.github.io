@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        深度学习——循环神经网络——文本预处理 | 科学炼丹
+      
+    </title>
+    <meta name="description" content="由Hexo及华为云驱动"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+
+  <meta name="generator" content="Hexo 6.3.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/ability_DA">数据分析</a>
+            
+              <a class="nav-menu-item" href="/ability_DL">深度学习</a>
+            
+              <a class="nav-menu-item" href="/award">学习经历</a>
+            
+              <a class="nav-menu-item" href="/honor">学术成就</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">深度学习——循环神经网络——文本预处理</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" class="post-tag">#深度学习</a>
+  
+    <a href="/tags/%E5%8D%95GPU%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/" class="post-tag">#单GPU训练模型</a>
+  
+    <a href="/tags/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" class="post-tag">#循环神经网络</a>
+  
+    <a href="/tags/%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/" class="post-tag">#文本预处理</a>
+  
+
+
+          <span class="post-date">2023-02-20</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86"><span class="toc-text">文本预处理</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>摘要: 本节内容主要讲述循环神经网络的文本预处理</p>
+<span id="more"></span>
+
+<h2 id="文本预处理"><a href="#文本预处理" class="headerlink" title="文本预处理"></a>文本预处理</h2><p>文本预处理的步骤</p>
+<ol>
+<li>将文本作为字符串加载到内存中</li>
+<li>将字符串拆分为词元（如单词和字符）</li>
+<li>建立一个词表，将拆分的词元映射到数字索引</li>
+<li>将文本转换为数字索引序列，方便模型操作<br>读取数据集<br>用Time Machine来小试牛刀一下<br>词元化<br>词元（token）是文本的基本单位。<br>词表<br>词表（vocabulary）是构建的一个字典，用来将字符串类型的词元映射到从0开始的数字索引中。</li>
+</ol>
+<p>首先将训练集中所有文档合并在一起，对它们一词元进行统计， 得到的统计结果称之为语料（corpus）。 然后根据每个唯一词元的出现频率，为其分配一个数字索引。 很少出现的词元通常被移除，这可以降低复杂性。 另外，语料库中不存在或已删除的任何词元都将映射到一个特定的未知词元“<unk>”。 我们可以选择增加一个列表，用于保存那些被保留的词元， 例如：填充词元（“<pad>”）； 序列开始词元（“<bos>”）； 序列结束词元（“<eos>”）。</p>
+<hr>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 引入必要的库</span></span><br><span class="line"><span class="keyword">import</span> collections</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">from</span> d2l <span class="keyword">import</span> torch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取数据集</span></span><br><span class="line">d2l.DATA_HUB[<span class="string">&#x27;time_machine&#x27;</span>] = (d2l.DATA_URL + <span class="string">&#x27;timemachine.txt&#x27;</span>,</span><br><span class="line">                                <span class="string">&#x27;090b5e7e70c295757f55df93cb0a180b9691891a&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_time_machine</span>():  <span class="comment">#@save</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;将时间机器数据集加载到文本行的列表中&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(d2l.download(<span class="string">&#x27;time_machine&#x27;</span>), <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        lines = f.readlines()</span><br><span class="line">    <span class="comment"># 这里用正则做了一个处理</span></span><br><span class="line">    <span class="keyword">return</span> [re.sub(<span class="string">&#x27;[^A-Za-z]+&#x27;</span>, <span class="string">&#x27; &#x27;</span>, line).strip().lower() <span class="keyword">for</span> line <span class="keyword">in</span> lines]</span><br><span class="line"></span><br><span class="line">lines = read_time_machine()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;# 文本总行数: <span class="subst">&#123;<span class="built_in">len</span>(lines)&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(lines[<span class="number">0</span>])</span><br><span class="line"><span class="built_in">print</span>(lines[<span class="number">10</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 词元化</span></span><br><span class="line"><span class="comment"># tokenize将文本的行列表（lines）作为输入，列表当中每个元素是一个文本序列，每个文本序列又被拆分成一个词元列表。</span></span><br><span class="line"><span class="comment"># 因此，其实实际上我们输入进来的是一个列表嵌套列表格式的输入</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tokenize</span>(<span class="params">lines, token=<span class="string">&#x27;word&#x27;</span></span>):  <span class="comment">#@save</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;将文本行拆分为单词或字符词元&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 这里进行一个很暴力的处理，将输入的文本当中除了单词和字符，其他的所有的词元统统处理成未知词元类型</span></span><br><span class="line">    <span class="keyword">if</span> token == <span class="string">&#x27;word&#x27;</span>:</span><br><span class="line">        <span class="comment"># 函数返回一个由词元列表组成的列表，其中的每个词元都是一个字符串</span></span><br><span class="line">        <span class="comment"># 输入的形式是列表嵌套列表，返回的形式仍旧是列表嵌套列表，只不过返回的嵌套的列表已经是把原来的语句切分成词元之后所组成的列表了</span></span><br><span class="line">        <span class="keyword">return</span> [line.split() <span class="keyword">for</span> line <span class="keyword">in</span> lines]</span><br><span class="line">    <span class="keyword">elif</span> token == <span class="string">&#x27;char&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> [<span class="built_in">list</span>(line) <span class="keyword">for</span> line <span class="keyword">in</span> lines]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;错误：未知词元类型：&#x27;</span> + token)</span><br><span class="line"></span><br><span class="line">tokens = tokenize(lines)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">11</span>):</span><br><span class="line">    <span class="built_in">print</span>(tokens[i])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成词表</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Vocab</span>:  <span class="comment">#@save</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;文本词表&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># reserved_token是指比如一个token是一个句子开头的token或者是一个句子的结尾的token，就单独的标注出来</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, tokens=<span class="literal">None</span>, min_freq=<span class="number">0</span>, reserved_tokens=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="keyword">if</span> tokens <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            tokens = []</span><br><span class="line">        <span class="keyword">if</span> reserved_tokens <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            reserved_tokens = []</span><br><span class="line">        <span class="comment"># 按出现频率排序</span></span><br><span class="line">        counter = count_corpus(tokens)</span><br><span class="line">        self._token_freqs = <span class="built_in">sorted</span>(counter.items(), key=<span class="keyword">lambda</span> x: x[<span class="number">1</span>],</span><br><span class="line">                                   reverse=<span class="literal">True</span>)</span><br><span class="line">        <span class="comment"># 未知词元的索引为0</span></span><br><span class="line">        self.idx_to_token = [<span class="string">&#x27;&lt;unk&gt;&#x27;</span>] + reserved_tokens</span><br><span class="line">        self.token_to_idx = &#123;token: idx</span><br><span class="line">                             <span class="keyword">for</span> idx, token <span class="keyword">in</span> <span class="built_in">enumerate</span>(self.idx_to_token)&#125;</span><br><span class="line">        <span class="keyword">for</span> token, freq <span class="keyword">in</span> self._token_freqs:</span><br><span class="line">            <span class="comment"># 如果一个token出现的次数小于min_freq，那么就认为这个词其实是很少用到的，然后就把这个词丢掉</span></span><br><span class="line">            <span class="keyword">if</span> freq &lt; min_freq:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">if</span> token <span class="keyword">not</span> <span class="keyword">in</span> self.token_to_idx:</span><br><span class="line">                self.idx_to_token.append(token)</span><br><span class="line">                self.token_to_idx[token] = <span class="built_in">len</span>(self.idx_to_token) - <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.idx_to_token)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, tokens</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(tokens, (<span class="built_in">list</span>, <span class="built_in">tuple</span>)):</span><br><span class="line">            <span class="keyword">return</span> self.token_to_idx.get(tokens, self.unk)</span><br><span class="line">        <span class="keyword">return</span> [self.__getitem__(token) <span class="keyword">for</span> token <span class="keyword">in</span> tokens]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">to_tokens</span>(<span class="params">self, indices</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(indices, (<span class="built_in">list</span>, <span class="built_in">tuple</span>)):</span><br><span class="line">            <span class="keyword">return</span> self.idx_to_token[indices]</span><br><span class="line">        <span class="keyword">return</span> [self.idx_to_token[index] <span class="keyword">for</span> index <span class="keyword">in</span> indices]</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">unk</span>(<span class="params">self</span>):  <span class="comment"># 未知词元的索引为0</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">token_freqs</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self._token_freqs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 对于给出的每一个独一无二的token构造一个字典，然后把它插入进这个字典里，并计算出现的次数</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">count_corpus</span>(<span class="params">tokens</span>):  <span class="comment">#@save</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;统计词元的频率&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 这里的tokens是1D列表或2D列表</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(tokens) == <span class="number">0</span> <span class="keyword">or</span> <span class="built_in">isinstance</span>(tokens[<span class="number">0</span>], <span class="built_in">list</span>):</span><br><span class="line">        <span class="comment"># 将词元列表展平成一个列表</span></span><br><span class="line">        tokens = [token <span class="keyword">for</span> line <span class="keyword">in</span> tokens <span class="keyword">for</span> token <span class="keyword">in</span> line]</span><br><span class="line">    <span class="keyword">return</span> collections.Counter(tokens)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 整合所有功能</span></span><br><span class="line"><span class="comment"># 1. 为了简化后面章节中的训练，我们使用字符（而不是单词）实现文本词元化；</span></span><br><span class="line"><span class="comment"># 2. 时光机器数据集中的每个文本行不一定是一个句子或一个段落，还可能是一个单词，因此返回的corpus仅处理为单个列表，而不是使用多词元列表构成的一个列表。</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">load_corpus_time_machine</span>(<span class="params">max_tokens=-<span class="number">1</span></span>):  <span class="comment">#@save</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;返回时光机器数据集的词元索引列表和词表&quot;&quot;&quot;</span></span><br><span class="line">    lines = read_time_machine()</span><br><span class="line">    tokens = tokenize(lines, <span class="string">&#x27;char&#x27;</span>)</span><br><span class="line">    vocab = Vocab(tokens)</span><br><span class="line">    <span class="comment"># 因为时光机器数据集中的每个文本行不一定是一个句子或一个段落，</span></span><br><span class="line">    <span class="comment"># 所以将所有文本行展平到一个列表中</span></span><br><span class="line">    corpus = [vocab[token] <span class="keyword">for</span> line <span class="keyword">in</span> tokens <span class="keyword">for</span> token <span class="keyword">in</span> line]</span><br><span class="line">    <span class="keyword">if</span> max_tokens &gt; <span class="number">0</span>:</span><br><span class="line">        corpus = corpus[:max_tokens]</span><br><span class="line">    <span class="keyword">return</span> corpus, vocab</span><br><span class="line"></span><br><span class="line">corpus, vocab = load_corpus_time_machine()</span><br><span class="line"><span class="built_in">len</span>(corpus), <span class="built_in">len</span>(vocab)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>总结：</p>
+<ul>
+<li>文本是序列数据的一种最常见的形式之一。</li>
+<li>为了对文本进行预处理，我们通常将文本拆分为词元，构建词表将词元字符串映射为数字索引，并将文本数据转换为词元索引以供模型操作。</li>
+</ul>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+      <div class="like-author">
+  <input type="checkbox" id="likeCode" />
+  <div class="author-face">
+    <img height="100px"
+         width="100px"
+         id="front-face"
+         alt="author face"
+         src="/images/IMG_5172.JPG# 头像图片"/>
+    <img height="100px"
+         width="100px"
+         id="back-face"
+         alt="like code"
+         src="/images/IMG_3538.jpg# 支付码图片"/>
+  </div>
+  <div class="like-text">“请作者喝杯咖啡”</div>
+  <label for="likeCode" class="like-btn">
+    <svg viewBox="0 0 1024 1024"
+         width="20px"
+         style="margin-right: 10px"
+         height="20px">
+      <path d="M466.88 908.96L113.824 563.296a270.08 270.08 0 0 1 0-387.392c108.8-106.56 284.896-106.56 393.696 0 1.504 1.472 2.976 2.944 4.448 4.48 1.472-1.536 2.944-3.008 4.448-4.48 108.8-106.56 284.896-106.56 393.696 0a269.952 269.952 0 0 1 34.016 347.072l-387.392 385.6a64 64 0 0 1-89.92 0.384z" p-id="13650" fill="#ee4242"/>
+    </svg>
+    喜欢作者
+  </label>
+</div>
+
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2023/05/20/%E8%8D%A3%E8%AA%89FRL/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>SSCI 1区期刊审稿经历</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2023/01/20/RNN/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      深度学习——循环神经网络
+    </a>
+  
+</div>
+
+    
+      <div class="related-post">
+  <div class="related__head">
+  
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" class="post-tag">#深度学习</a>
+  
+    <a href="/tags/%E5%8D%95GPU%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/" class="post-tag">#单GPU训练模型</a>
+  
+    <a href="/tags/%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" class="post-tag">#循环神经网络</a>
+  
+    <a href="/tags/%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/" class="post-tag">#文本预处理</a>
+  
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/2023/01/20/RNN/" title="深度学习——循环神经网络" rel="bookmark">深度学习——循环神经网络</a></div></div><div class="null-item"><div class="null-title"><a href="/2022/02/20/AlexNet/" title="深度学习——卷积神经网络——AlexNet" rel="bookmark">深度学习——卷积神经网络——AlexNet</a></div></div><div class="null-item"><div class="null-title"><a href="/2022/04/20/NiN/" title="深度学习——卷积神经网络——NiN" rel="bookmark">深度学习——卷积神经网络——NiN</a></div></div><div class="null-item"><div class="null-title"><a href="/2020/07/20/AdaBoost与GBDT/" title="机器学习算法——AdaBoost与GBDT模型" rel="bookmark">机器学习算法——AdaBoost与GBDT模型</a></div></div><div class="null-item"><div class="null-title"><a href="/2021/01/20/K近邻算法/" title="机器学习算法——K近邻算法" rel="bookmark">机器学习算法——K近邻算法</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">海</div><div class="matts">内</div><div class="matts">存</div><div class="matts">知</div><div class="matts">己</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">天</div><div class="matts">涯</div><div class="matts">若</div><div class="matts">比</div><div class="matts">邻</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">Theme Tranquility</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:jordanlee@stumail.hbu.edu.cn?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/Alchemiest">Alchemiest</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-wx.svg"/>
+                    <a class="foot-link" href="">松果篮</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/PNG图像 2.PNG"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://b23.tv/qb0poEj">科学炼丹</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:jordanlee@stumail.hbu.edu.cn">jordanlee@stumail.hbu.edu.cn</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="http://example.com">科学炼丹</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"Alchemiest# MUST HAVE, Your Github Username","admin":null,"repo":"https://github.com/Alchemiest/Alchemiest.github.io# MUST HAVE, The name of the repo you use to store Gitment comments","clientID":"科学炼丹# MUST HAVE, Github client id for the Gitment","clientSecret":null,"distractionFreeMode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  param.id = location.pathname
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

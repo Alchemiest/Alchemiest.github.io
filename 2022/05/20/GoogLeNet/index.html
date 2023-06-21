@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        深度学习——卷积神经网络——GoogLeNet | 科学炼丹
+      
+    </title>
+    <meta name="description" content="由Hexo及华为云驱动"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+
+  <meta name="generator" content="Hexo 6.3.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/ability_DA">数据分析</a>
+            
+              <a class="nav-menu-item" href="/ability_DL">深度学习</a>
+            
+              <a class="nav-menu-item" href="/award">学习经历</a>
+            
+              <a class="nav-menu-item" href="/honor">学术成就</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">深度学习——卷积神经网络——GoogLeNet</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" class="post-tag">#深度学习</a>
+  
+    <a href="/tags/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" class="post-tag">#卷积神经网络</a>
+  
+    <a href="/tags/%E5%8D%95GPU%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/" class="post-tag">#单GPU训练模型</a>
+  
+    <a href="/tags/GoogLeNet/" class="post-tag">#GoogLeNet</a>
+  
+
+
+          <span class="post-date">2022-05-20</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GoogLeNet"><span class="toc-text">GoogLeNet</span></a></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>摘要:本节内容主要讲述卷积神经网络的革命性网络——GoogLeNet。GoogLeNet是人类历史上首次将深度学习网络的层数突破100层，并且在当年的GPU上能够训练的了，让我们一起回顾GoogLeNet所取得的突破！</p>
+<span id="more"></span>
+<h2 id="GoogLeNet"><a href="#GoogLeNet" class="headerlink" title="GoogLeNet"></a>GoogLeNet</h2><p>因为卷积层的超参数可以选择的太多了，并且并不知道哪一种组合会不会出来更好的效果，所以GoogLeNet引入了Inception块这样的概念，全都要，在一个块里使用不同窗口大小的卷积层，不同的结构等等，多种结构多条路径并行，Inception块输入和输出等同高宽，但是因为Inception块当中有多条路径，最后的输出是把每一条路径上的输出结果叠加在一起，所以Inception块的输出的通道数量会非常的大。Inception块不改变高宽，只改变通道。Inception块的不同路径通过降低通道数来控制模型复杂度，每条路径上的通道数可能不同，在输出的所有的通道当中，如果我们认为某一条路径上的结构是更加重要的，这个路径的输出通道的数量相比于其他的路径的通道数量就更加多一些。Inception块当中的1x1的卷积层的作用基本上都是用来变化通道数量的，其他的卷积层基本上都是用来抽取信息的。<br>GoogLeNet吸收了NiN中串联网络的思想，并在此基础上做了改进。 这篇论文的一个重点是解决了什么样大小的卷积核最合适的问题。 毕竟，以前流行的网络使用小到1×1，大到11×11的卷积核。 本文的一个观点是，有时使用不同大小的卷积核组合是有利的。 在本节中，我们将介绍一个稍微简化的GoogLeNet版本：我们省略了一些为稳定训练而添加的特殊特性，现在有了更好的训练方法，这些特性不是必要的。<br>之前有一个问题，在于一个输入进来是分开然后一块一块的进入每一个路径吗，实际上不是的。不要把这四个路径想做组成一个块，想做这是四个神经网络实际上更好理解一点，这也是为什么要在NiN之后讲GoogLeNet，数据输入进来之后，把所有的数据，有几条路径就复制几份，然后在每一条路径上都用完整的数据跑一遍，然后分别的输出，最最后用Concat把四条路径（相当于四个神经网络）的输出，在通道这个维度上一下子拼在一起，然后输出出去，这就是GoogLeNet的处理的路径。<br>Inception块由四条并行路径组成。 前三条路径使用窗口大小为1×1、3×3和5×5的卷积层，从不同空间大小中提取信息。 中间的两条路径在输入上执行1×1卷积，以减少通道数，从而降低模型的复杂性。 第四条路径使用3×3最大汇聚层，然后使用1×1卷积层来改变通道数。 这四条路径都使用合适的填充来使输入与输出的高和宽一致，最后我们将每条线路的输出在通道维度上连结，并构成Inception块的输出。在Inception块中，通常调整的超参数是每层输出通道数。<br>白色的$$1\times 1$$的卷积层是用来改变通道数量的（改变输入或改变输出），蓝色的卷积层则是用来抽取信息的（$$1\times 1$$的卷积层就是用来抽取通道信息的，而像$$3\times 3$$的卷积层或者$$5\times 5$$的卷积层或者pooling层就是用来抽取空间信息的）<br>那么为什么GoogLeNet这个网络如此有效呢？ 首先我们考虑一下滤波器（filter）的组合，它们可以用各种滤波器尺寸探索图像，这意味着不同大小的滤波器可以有效地识别不同范围的图像细节。 同时，我们可以为不同的滤波器分配不同数量的参数。<br>GoogLeNet一共使用9个Inception块和全局平均汇聚层的堆叠来生成其估计值。Inception块之间的最大汇聚层可降低维度。 第一个模块类似于AlexNet和LeNet，Inception块的组合从VGG继承，全局平均汇聚层避免了在最后使用全连接层。<br>GoogLeNet的1和段2后输出的图片的大小相比于AlexNet更大一些是为了支持后面用更深的网络。</p>
+<ul>
+<li>Inception块用4条有不同超参数的卷积层和池化层的路径来抽取不同的信息——主要优点是模型参数小，计算复杂度低</li>
+<li>GoogLeNet使用了9个Inception块，是第一个达到上百层的网络——后续有一系列改进<br>GoogLeNet主要由5个module（模块）组成（有的module是由Inception块组成的）</li>
+</ul>
+<hr>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#定义Inception块</span></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> d2l <span class="keyword">import</span> torch <span class="keyword">as</span> d2l</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Inception</span>(nn.Module):</span><br><span class="line">    <span class="comment"># c1--c4是每条路径的输出通道数</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_channels, c1, c2, c3, c4, **kwargs</span>):</span><br><span class="line">        <span class="built_in">super</span>(Inception, self).__init__(**kwargs)</span><br><span class="line">        <span class="comment"># 线路1，单1x1卷积层</span></span><br><span class="line">        self.p1_1 = nn.Conv2d(in_channels, c1, kernel_size=<span class="number">1</span>)</span><br><span class="line">        <span class="comment"># 线路2，1x1卷积层后接3x3卷积层</span></span><br><span class="line">        self.p2_1 = nn.Conv2d(in_channels, c2[<span class="number">0</span>], kernel_size=<span class="number">1</span>)</span><br><span class="line">        self.p2_2 = nn.Conv2d(c2[<span class="number">0</span>], c2[<span class="number">1</span>], kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="comment"># 线路3，1x1卷积层后接5x5卷积层</span></span><br><span class="line">        self.p3_1 = nn.Conv2d(in_channels, c3[<span class="number">0</span>], kernel_size=<span class="number">1</span>)</span><br><span class="line">        self.p3_2 = nn.Conv2d(c3[<span class="number">0</span>], c3[<span class="number">1</span>], kernel_size=<span class="number">5</span>, padding=<span class="number">2</span>)</span><br><span class="line">        <span class="comment"># 线路4，3x3最大汇聚层后接1x1卷积层</span></span><br><span class="line">        self.p4_1 = nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">1</span>, padding=<span class="number">1</span>)</span><br><span class="line">        self.p4_2 = nn.Conv2d(in_channels, c4, kernel_size=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        p1 = F.relu(self.p1_1(x))</span><br><span class="line">        p2 = F.relu(self.p2_2(F.relu(self.p2_1(x))))</span><br><span class="line">        p3 = F.relu(self.p3_2(F.relu(self.p3_1(x))))</span><br><span class="line">        p4 = F.relu(self.p4_2(self.p4_1(x)))</span><br><span class="line">        <span class="comment"># 在通道维度上连结输出</span></span><br><span class="line">        <span class="keyword">return</span> torch.cat((p1, p2, p3, p4), dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#Module1</span></span><br><span class="line">b1 = nn.Sequential(nn.Conv2d(<span class="number">1</span>, <span class="number">64</span>, kernel_size=<span class="number">7</span>, stride=<span class="number">2</span>, padding=<span class="number">3</span>),</span><br><span class="line">                   nn.ReLU(),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br><span class="line"><span class="comment">#Module2</span></span><br><span class="line">b2 = nn.Sequential(nn.Conv2d(<span class="number">64</span>, <span class="number">64</span>, kernel_size=<span class="number">1</span>),</span><br><span class="line">                   nn.ReLU(),</span><br><span class="line">                   nn.Conv2d(<span class="number">64</span>, <span class="number">192</span>, kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">                   nn.ReLU(),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br><span class="line"><span class="comment">#Module3</span></span><br><span class="line">b3 = nn.Sequential(Inception(<span class="number">192</span>, <span class="number">64</span>, (<span class="number">96</span>, <span class="number">128</span>), (<span class="number">16</span>, <span class="number">32</span>), <span class="number">32</span>),</span><br><span class="line">                   Inception(<span class="number">256</span>, <span class="number">128</span>, (<span class="number">128</span>, <span class="number">192</span>), (<span class="number">32</span>, <span class="number">96</span>), <span class="number">64</span>),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br><span class="line"><span class="comment">#Module4</span></span><br><span class="line">b4 = nn.Sequential(Inception(<span class="number">480</span>, <span class="number">192</span>, (<span class="number">96</span>, <span class="number">208</span>), (<span class="number">16</span>, <span class="number">48</span>), <span class="number">64</span>),</span><br><span class="line">                   Inception(<span class="number">512</span>, <span class="number">160</span>, (<span class="number">112</span>, <span class="number">224</span>), (<span class="number">24</span>, <span class="number">64</span>), <span class="number">64</span>),</span><br><span class="line">                   Inception(<span class="number">512</span>, <span class="number">128</span>, (<span class="number">128</span>, <span class="number">256</span>), (<span class="number">24</span>, <span class="number">64</span>), <span class="number">64</span>),</span><br><span class="line">                   Inception(<span class="number">512</span>, <span class="number">112</span>, (<span class="number">144</span>, <span class="number">288</span>), (<span class="number">32</span>, <span class="number">64</span>), <span class="number">64</span>),</span><br><span class="line">                   Inception(<span class="number">528</span>, <span class="number">256</span>, (<span class="number">160</span>, <span class="number">320</span>), (<span class="number">32</span>, <span class="number">128</span>), <span class="number">128</span>),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br><span class="line"><span class="comment">#Module5</span></span><br><span class="line">b5 = nn.Sequential(Inception(<span class="number">832</span>, <span class="number">256</span>, (<span class="number">160</span>, <span class="number">320</span>), (<span class="number">32</span>, <span class="number">128</span>), <span class="number">128</span>),</span><br><span class="line">                   Inception(<span class="number">832</span>, <span class="number">384</span>, (<span class="number">192</span>, <span class="number">384</span>), (<span class="number">48</span>, <span class="number">128</span>), <span class="number">128</span>),</span><br><span class="line">                   nn.AdaptiveAvgPool2d((<span class="number">1</span>,<span class="number">1</span>)),</span><br><span class="line">                   nn.Flatten())</span><br><span class="line"></span><br><span class="line">net = nn.Sequential(b1, b2, b3, b4, b5, nn.Linear(<span class="number">1024</span>, <span class="number">10</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment">#测试模型</span></span><br><span class="line">X = torch.rand(size=(<span class="number">1</span>, <span class="number">1</span>, <span class="number">96</span>, <span class="number">96</span>))</span><br><span class="line"><span class="keyword">for</span> layer <span class="keyword">in</span> net:</span><br><span class="line">    X = layer(X)</span><br><span class="line">    <span class="built_in">print</span>(layer.__class__.__name__,<span class="string">&#x27;output shape:\t&#x27;</span>, X.shape)</span><br><span class="line"></span><br><span class="line"><span class="comment">#读取数据，训练模型</span></span><br><span class="line">lr, num_epochs, batch_size = <span class="number">0.1</span>, <span class="number">1</span>, <span class="number">128</span></span><br><span class="line">train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size, resize=<span class="number">96</span>)</span><br><span class="line">d2l.train_ch6(net, train_iter, test_iter, num_epochs, lr, <span class="string">&#x27;mps&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+      <div class="like-author">
+  <input type="checkbox" id="likeCode" />
+  <div class="author-face">
+    <img height="100px"
+         width="100px"
+         id="front-face"
+         alt="author face"
+         src="/images/IMG_5172.JPG# 头像图片"/>
+    <img height="100px"
+         width="100px"
+         id="back-face"
+         alt="like code"
+         src="/images/IMG_3538.jpg# 支付码图片"/>
+  </div>
+  <div class="like-text">“请作者喝杯咖啡”</div>
+  <label for="likeCode" class="like-btn">
+    <svg viewBox="0 0 1024 1024"
+         width="20px"
+         style="margin-right: 10px"
+         height="20px">
+      <path d="M466.88 908.96L113.824 563.296a270.08 270.08 0 0 1 0-387.392c108.8-106.56 284.896-106.56 393.696 0 1.504 1.472 2.976 2.944 4.448 4.48 1.472-1.536 2.944-3.008 4.448-4.48 108.8-106.56 284.896-106.56 393.696 0a269.952 269.952 0 0 1 34.016 347.072l-387.392 385.6a64 64 0 0 1-89.92 0.384z" p-id="13650" fill="#ee4242"/>
+    </svg>
+    喜欢作者
+  </label>
+</div>
+
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2022/06/20/Batch%20Normalization/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>深度学习——卷积神经网络——Batch Normalization</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2022/04/20/NiN/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      深度学习——卷积神经网络——NiN
+    </a>
+  
+</div>
+
+    
+      <div class="related-post">
+  <div class="related__head">
+  
+    <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" class="post-tag">#深度学习</a>
+  
+    <a href="/tags/%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" class="post-tag">#卷积神经网络</a>
+  
+    <a href="/tags/%E5%8D%95GPU%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B/" class="post-tag">#单GPU训练模型</a>
+  
+    <a href="/tags/GoogLeNet/" class="post-tag">#GoogLeNet</a>
+  
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/2022/02/20/AlexNet/" title="深度学习——卷积神经网络——AlexNet" rel="bookmark">深度学习——卷积神经网络——AlexNet</a></div></div><div class="null-item"><div class="null-title"><a href="/2022/04/20/NiN/" title="深度学习——卷积神经网络——NiN" rel="bookmark">深度学习——卷积神经网络——NiN</a></div></div><div class="null-item"><div class="null-title"><a href="/2022/06/20/Batch Normalization/" title="深度学习——卷积神经网络——Batch Normalization" rel="bookmark">深度学习——卷积神经网络——Batch Normalization</a></div></div><div class="null-item"><div class="null-title"><a href="/2020/07/20/AdaBoost与GBDT/" title="机器学习算法——AdaBoost与GBDT模型" rel="bookmark">机器学习算法——AdaBoost与GBDT模型</a></div></div><div class="null-item"><div class="null-title"><a href="/2021/01/20/K近邻算法/" title="机器学习算法——K近邻算法" rel="bookmark">机器学习算法——K近邻算法</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">海</div><div class="matts">内</div><div class="matts">存</div><div class="matts">知</div><div class="matts">己</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">天</div><div class="matts">涯</div><div class="matts">若</div><div class="matts">比</div><div class="matts">邻</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">Theme Tranquility</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:jordanlee@stumail.hbu.edu.cn?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/Alchemiest">Alchemiest</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-wx.svg"/>
+                    <a class="foot-link" href="">松果篮</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/PNG图像 2.PNG"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://b23.tv/qb0poEj">科学炼丹</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:jordanlee@stumail.hbu.edu.cn">jordanlee@stumail.hbu.edu.cn</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="http://example.com">科学炼丹</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"Alchemiest# MUST HAVE, Your Github Username","admin":null,"repo":"https://github.com/Alchemiest/Alchemiest.github.io# MUST HAVE, The name of the repo you use to store Gitment comments","clientID":"科学炼丹# MUST HAVE, Github client id for the Gitment","clientSecret":null,"distractionFreeMode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  param.id = location.pathname
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

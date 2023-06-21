@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        机器学习算法——决策树 | 科学炼丹
+      
+    </title>
+    <meta name="description" content="由Hexo及华为云驱动"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+
+  <meta name="generator" content="Hexo 6.3.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/ability_DA">数据分析</a>
+            
+              <a class="nav-menu-item" href="/ability_DL">深度学习</a>
+            
+              <a class="nav-menu-item" href="/award">学习经历</a>
+            
+              <a class="nav-menu-item" href="/honor">学术成就</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">机器学习算法——决策树</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="post-tag">#机器学习</a>
+  
+    <a href="/tags/%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B/" class="post-tag">#分类模型</a>
+  
+    <a href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91%E6%A8%A1%E5%9E%8B/" class="post-tag">#决策树模型</a>
+  
+    <a href="/tags/%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B/" class="post-tag">#回归模型</a>
+  
+
+
+          <span class="post-date">2021-01-20</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%86%B3%E7%AD%96%E6%A0%91"><span class="toc-text">决策树</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%86%B3%E7%AD%96%E6%A0%91%E5%8E%9F%E7%90%86"><span class="toc-text">1. 决策树原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%86%B3%E7%AD%96%E6%A0%91%E6%AD%A5%E9%AA%A4"><span class="toc-text">2. 决策树步骤</span></a></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>摘要: 本节内容主要讲述决策树算法，具体内容包括1. 决策树原理；2. 决策树步骤</p>
+<span id="more"></span>
+<h1 id="决策树"><a href="#决策树" class="headerlink" title="决策树"></a>决策树</h1><h2 id="1-决策树原理"><a href="#1-决策树原理" class="headerlink" title="1. 决策树原理"></a>1. 决策树原理</h2><ol>
+<li>决策树的基本原理是通过对一系列问题的if&#x2F;else的推导,最终实现相关决策</li>
+<li>决策树中相关的重要概念:<ol>
+<li>父节点、子节点、根节点、叶子节点</li>
+<li>信息熵、基尼系数、均方误差:越低越好</li>
+<li>固有值:某个属性的固有值是固定的,通常,属性a取值数目越多,固有值通常会越大</li>
+</ol>
+</li>
+<li>决策树的基本类型:<ol>
+<li>分类决策树<ol>
+<li>ID3决策树<ol>
+<li>属性划分标准:信息增益:旧信息熵-新信息熵</li>
+</ol>
+</li>
+<li>C4.5决策树<ol>
+<li>属性划分标准:信息增益率:信息增益率&#x3D;信息增益&#x2F;固有值(运用增益率作为属性划分标准时,先找信息增益高于平均水平的,再用增益率,选择增益率最高的)</li>
+</ol>
+</li>
+<li>CART决策树<ol>
+<li>属性划分标准:基尼系数</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>回归决策树<ol>
+<li>属性划分标准:均方误差(MSE)</li>
+<li>回归决策树与分类决策树最大的区别就是:回归决策树的节点与叶子节点的拟合值是该节点中所有y的平均值,其中,<em>最终叶子节点的<strong>拟合值</strong></em>为<em>最终的回归模型的<strong>预测值</strong></em>(一个节点的拟合值的意思是这个节点的y的拟合值是多少,这个拟合值的获得就是把<strong>这个</strong>节点的所有的X所对应的y取平均值就是这个节点的拟合值).</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>决策树的建立方法:<ol>
+<li>用train数据来训练,在每一层都以这一层<em>还剩</em>的全部属性,把每个属性都假定为下一层的划分依据,并计算信息增益,然后取信息增益最大的一个属性作为这一层的划分标准</li>
+<li>举例:对于第二层来说,去掉第一层已经用掉的一个特征变量,在第一层分下来的每一个分支(就是第一层一共有几种取值)都把余下的n-1个属性假定为划分标准,计算这个属性带来的总信息增益(以按照这个属性为划分标准后的信息熵-按照上一层划分后的信息熵)最后选择信息增益最大的一个属性作为这一层的划分依据.</li>
+</ol>
+</li>
+<li><em><strong>决策树是否进行分枝</strong></em>:<ol>
+<li>预剪枝——是否提升泛化性能<ol>
+<li>在将训练集与测试集划分之后,用测试集来检验进行分枝前的精确度与进行分枝后的精确度的差异(也就是泛化能力的对比),若精确度能够提升就进行分枝,若精确度不能提升就不再进行分枝,也就是说进行分枝一定是要熵减的,若不能达到则不进行分枝,称为预剪枝</li>
+</ol>
+</li>
+<li>是否不再符合划分标准</li>
+</ol>
+</li>
+<li><em><strong>决策树不再划分的标志</strong></em>:<ol>
+<li>当前节点内容全部为正例&#x2F;反例</li>
+<li>没有属性可以用来划分,或属性只有一个取值(这个取值下可能还同时有正例和反例)</li>
+<li>样本为空</li>
+</ol>
+</li>
+<li><em><strong>决策树叶子节点当中包含正例与反例的处理</strong></em>:<ol>
+<li>当决策层最后一层已经无法再划分的叶子节点当中仍然包涵正例与反例的时候,在这个叶子节点上,决策树就退化为了逻辑回归模型(二分类或者多分类)</li>
+<li>这样处理之后的最终结果是:<em><strong>叶子节点由仍旧包含正例与反例的节点,转唯了一个确定的正例&#x2F;反例</strong></em>.</li>
+</ol>
+</li>
+<li>对于连续属性的离散化处理:<ol>
+<li>适用情况:通常是在回归决策树当中出现连续属性,当然也会在分类决策树当中出现</li>
+<li>离散化处理:对于属性a,取n-1个可能的划分点,这n-1个点是a属性由小到大排列之后,每两个相邻点的均值,这n-1个点记为Ta,其中每个点记为t,<em><strong>信息增益 &#x3D; 在t这点的信息熵 - (按照t划分下的大于t的a属性的集合的信息熵·大于t的a属性的集合占总体集合D的数量的比例(权重) + 按照t划分下的小于t的a属性的集合的信息熵·小于t的a属性的集合占总体集合D的数量的比例(权重))</strong></em></li>
+<li><em><strong>注意:连续属性作为划分属性之后,在下一层仍旧可以作为划分属性</strong></em></li>
+</ol>
+</li>
+<li>数据缺失:<ol>
+<li>属性值缺失: 以无缺失值所占权重·无缺失值信息增益来代替原信息增益</li>
+<li>属性上某个值缺失</li>
+</ol>
+</li>
+<li>多变量决策树</li>
+</ol>
+<h2 id="2-决策树步骤"><a href="#2-决策树步骤" class="headerlink" title="2. 决策树步骤"></a>2. 决策树步骤</h2><ol>
+<li>用GridSearch与k折交叉验证结合求出最佳[[模型超参数的确定|超参数]]<ol>
+<li>用多参数调优</li>
+<li>GridSearch调优的标准就是AUC</li>
+<li>GridSearch是通过遍历所有的超参数，建立循环模型，选择最优的超参数的参数值</li>
+<li>喂给GridSearch的数据就是用K折来进行分组的——实际上是在这个循环里对每一个超参数的每一个参数取值都用K折的AUC验证了一次，最后取最优的超参数的参数值</li>
+</ol>
+</li>
+<li>划分训练集和测试集</li>
+<li>模型搭建: 用训练集来喂模型</li>
+<li>模型准确度检验: 用用测试集喂模型得出的结果与y_test做比较,得出训练器的准确度,越准确越好——真正的模型效果的评估还是得间下面的模型效果评估专题部分,这里的这个单独用精确度来衡量并不有效——这里的模型性能的检验指的是对于[[单个模型的性能检验]]</li>
+<li><em><strong>注：</strong></em><ol>
+<li><em><strong>GridSearch已经把最好的参数选好了，在GridSearch中，不同的超参数之间就是用K折AUC的平均值的大小的比较，最终选择最好的超参数</strong></em></li>
+<li><em><strong>对于超参数的部分在第一步结束之后就打住了，剩下的看这个模型本身好不好，还是看第四步中的单个模型的性能检验，相当于我们看的是这个模型已经选好了最好的超参数下的性能度量。</strong></em></li>
+</ol>
+</li>
+</ol>
+<hr>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#导入数据</span></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">df = pd.read_excel(<span class="string">&#x27;/Users/johnwick/Desktop/机器学习/第5章 决策树模型/源代码汇总_Jupyter Notebook格式（推荐）/员工离职预测模型.xlsx&#x27;</span>)</span><br><span class="line">df = df.replace(&#123;<span class="string">&#x27;工资&#x27;</span>: &#123;<span class="string">&#x27;低&#x27;</span>: <span class="number">0</span>, <span class="string">&#x27;中&#x27;</span>: <span class="number">1</span>, <span class="string">&#x27;高&#x27;</span>: <span class="number">2</span>&#125;&#125;)</span><br><span class="line">X = df.drop(columns=<span class="string">&#x27;离职&#x27;</span>)</span><br><span class="line">y = df[<span class="string">&#x27;离职&#x27;</span>]</span><br><span class="line"><span class="comment">#划分训练集与测试集</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size= <span class="number">0.2</span>, random_state= <span class="number">0</span>)</span><br><span class="line"><span class="comment">#采用GridSearch结合K折交叉验证求出最优超参数</span></span><br><span class="line">parameters = &#123;<span class="string">&#x27;max_depth&#x27;</span>: [<span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">13</span>], <span class="string">&#x27;criterion&#x27;</span>: [<span class="string">&#x27;gini&#x27;</span>, <span class="string">&#x27;entropy&#x27;</span>], <span class="string">&#x27;min_samples_split&#x27;</span>: [<span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">15</span>]&#125;</span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier</span><br><span class="line">model = DecisionTreeClassifier()</span><br><span class="line">grid_search = GridSearchCV(model, parameters, scoring=<span class="string">&#x27;roc_auc&#x27;</span>, cv = <span class="number">5</span>)</span><br><span class="line">grid_search.fit(X_train, y_train)</span><br><span class="line">grid_search.best_params_</span><br><span class="line"><span class="comment">#用数据喂模型</span></span><br><span class="line">model = DecisionTreeClassifier(criterion= <span class="string">&#x27;entropy&#x27;</span>, max_depth= <span class="number">11</span>, min_samples_split= <span class="number">13</span>)</span><br><span class="line">model.fit(X_train, y_train)</span><br><span class="line"><span class="comment">#模型性能度量</span></span><br><span class="line">y_pred = model.predict(X_test)</span><br><span class="line"><span class="comment">#传统精确度的度量</span></span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score</span><br><span class="line">score = accuracy_score(y_pred, y_test)</span><br><span class="line"><span class="comment">#AUC度量</span></span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> roc_curve</span><br><span class="line">fpr, tpr, thres = roc_curve(y_test, y_pred_proba[:, <span class="number">1</span>])</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">plt.plot(fpr, tpr)</span><br><span class="line">plt.show()</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> roc_auc_score</span><br><span class="line">score = roc_auc_score(y_test, y_pred_proba[:, <span class="number">1</span>])</span><br><span class="line">model.feature_importances_</span><br><span class="line"><span class="comment">#K折交叉验证AUC度量</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score</span><br><span class="line">acc = cross_val_score(model, X, y, scoring= <span class="string">&#x27;roc_auc&#x27;</span>, cv = <span class="number">5</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+      <div class="like-author">
+  <input type="checkbox" id="likeCode" />
+  <div class="author-face">
+    <img height="100px"
+         width="100px"
+         id="front-face"
+         alt="author face"
+         src="/images/IMG_5172.JPG# 头像图片"/>
+    <img height="100px"
+         width="100px"
+         id="back-face"
+         alt="like code"
+         src="/images/IMG_3538.jpg# 支付码图片"/>
+  </div>
+  <div class="like-text">“请作者喝杯咖啡”</div>
+  <label for="likeCode" class="like-btn">
+    <svg viewBox="0 0 1024 1024"
+         width="20px"
+         style="margin-right: 10px"
+         height="20px">
+      <path d="M466.88 908.96L113.824 563.296a270.08 270.08 0 0 1 0-387.392c108.8-106.56 284.896-106.56 393.696 0 1.504 1.472 2.976 2.944 4.448 4.48 1.472-1.536 2.944-3.008 4.448-4.48 108.8-106.56 284.896-106.56 393.696 0a269.952 269.952 0 0 1 34.016 347.072l-387.392 385.6a64 64 0 0 1-89.92 0.384z" p-id="13650" fill="#ee4242"/>
+    </svg>
+    喜欢作者
+  </label>
+</div>
+
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2021/01/20/K%E8%BF%91%E9%82%BB%E7%AE%97%E6%B3%95/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>机器学习算法——K近邻算法</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2021/01/10/%E6%9C%B4%E7%B4%A0%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      机器学习算法——多层神经网络（MLP）
+    </a>
+  
+</div>
+
+    
+      <div class="related-post">
+  <div class="related__head">
+  
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="post-tag">#机器学习</a>
+  
+    <a href="/tags/%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B/" class="post-tag">#分类模型</a>
+  
+    <a href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91%E6%A8%A1%E5%9E%8B/" class="post-tag">#决策树模型</a>
+  
+    <a href="/tags/%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B/" class="post-tag">#回归模型</a>
+  
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/2020/09/20/逻辑回归/" title="机器学习算法——逻辑回归" rel="bookmark">机器学习算法——逻辑回归</a></div></div><div class="null-item"><div class="null-title"><a href="/2020/06/20/随机森林模型/" title="机器学习算法——随机森林模型" rel="bookmark">机器学习算法——随机森林模型</a></div></div><div class="null-item"><div class="null-title"><a href="/2020/07/20/AdaBoost与GBDT/" title="机器学习算法——AdaBoost与GBDT模型" rel="bookmark">机器学习算法——AdaBoost与GBDT模型</a></div></div><div class="null-item"><div class="null-title"><a href="/2021/01/20/K近邻算法/" title="机器学习算法——K近邻算法" rel="bookmark">机器学习算法——K近邻算法</a></div></div><div class="null-item"><div class="null-title"><a href="/2022/02/20/AlexNet/" title="深度学习——卷积神经网络——AlexNet" rel="bookmark">深度学习——卷积神经网络——AlexNet</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">海</div><div class="matts">内</div><div class="matts">存</div><div class="matts">知</div><div class="matts">己</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">天</div><div class="matts">涯</div><div class="matts">若</div><div class="matts">比</div><div class="matts">邻</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">Theme Tranquility</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:jordanlee@stumail.hbu.edu.cn?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/Alchemiest">Alchemiest</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-wx.svg"/>
+                    <a class="foot-link" href="">松果篮</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/PNG图像 2.PNG"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://b23.tv/qb0poEj">科学炼丹</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:jordanlee@stumail.hbu.edu.cn">jordanlee@stumail.hbu.edu.cn</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="http://example.com">科学炼丹</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"Alchemiest# MUST HAVE, Your Github Username","admin":null,"repo":"https://github.com/Alchemiest/Alchemiest.github.io# MUST HAVE, The name of the repo you use to store Gitment comments","clientID":"科学炼丹# MUST HAVE, Github client id for the Gitment","clientSecret":null,"distractionFreeMode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  param.id = location.pathname
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

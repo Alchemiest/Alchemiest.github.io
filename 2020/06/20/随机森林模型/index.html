@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        机器学习算法——随机森林模型 | 科学炼丹
+      
+    </title>
+    <meta name="description" content="由Hexo及华为云驱动"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+
+  <meta name="generator" content="Hexo 6.3.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/ability_DA">数据分析</a>
+            
+              <a class="nav-menu-item" href="/ability_DL">深度学习</a>
+            
+              <a class="nav-menu-item" href="/award">学习经历</a>
+            
+              <a class="nav-menu-item" href="/honor">学术成就</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">机器学习算法——随机森林模型</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="post-tag">#机器学习</a>
+  
+    <a href="/tags/%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B/" class="post-tag">#分类模型</a>
+  
+    <a href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/" class="post-tag">#集成学习模型</a>
+  
+    <a href="/tags/%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B/" class="post-tag">#回归模型</a>
+  
+    <a href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97%E6%A8%A1%E5%9E%8B/" class="post-tag">#随机森林模型</a>
+  
+
+
+          <span class="post-date">2020-06-20</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97%E6%A8%A1%E5%9E%8B"><span class="toc-text">随机森林模型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86"><span class="toc-text">1. 随机森林模型原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%E6%AD%A5%E9%AA%A4%E2%80%94%E2%80%94%E8%82%A1%E7%A5%A8%E6%B6%A8%E8%B7%8C%E9%A2%84%E6%B5%8B%E6%A8%A1%E5%9E%8B"><span class="toc-text">2. 随机森林模型应用步骤——股票涨跌预测模型</span></a></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>摘要: 本节内容主要讲述随机森林模型，具体内容包括1. 随机森林模型原理；2. 随机森林模型应用步骤——股票涨跌预测模型</p>
+<span id="more"></span>
+<h1 id="随机森林模型"><a href="#随机森林模型" class="headerlink" title="随机森林模型"></a>随机森林模型</h1><h2 id="1-随机森林模型原理"><a href="#1-随机森林模型原理" class="headerlink" title="1. 随机森林模型原理"></a>1. 随机森林模型原理</h2><ol>
+<li>随机森林模型是[[集成学习模型#Bagging算法|Bagging算法]]中的一种经典的模型,其弱学习器为决策树模型.</li>
+<li>随机森林的基本原理:随机森林模型首先在原始数据集中随机抽样,构成n个不同的样本数据集,然后对这n个样本数据集,对应搭建n个不同的决策树模型,最后根据这n个决策树,如果为分类随机森林则最终结果为这n个决策树模型的投票情况,如果为回归随机森林则最终结果为这n个决策树模型的平均值.</li>
+<li>为了保证决策树的泛化能力,随机森林在建立每棵决策树时遵循的原则:<ol>
+<li>数据随机:从所有数据当中,<strong>有放回地</strong>随机抽取数据作为其中一个决策树模型的训练数据,类似[[模型超参数的确定#2 自助法：|划分样本数据集的三个方法中的自助法]].eg:有1000个原始数据,则有放回的取1000次,构成一组新的数据,用于训练其中某一个决策树模型.</li>
+<li>特征随机:如果每个样本的特征维度为M,指定一个常数k &lt; M,随机地从M个特征中选取k个特征,在使用Python构造随机森林时,默认选取的特征个数k为$\sqrt{M}$.其实就是X是M维的,就是这个Dataframe是M列的,每次建立决策树的时候随机选取这M列当中的k列建立决策树,就是选取了k个特征.</li>
+</ol>
+</li>
+<li>随机森林模型的优势:相比于传统的决策树模型,随机森林模型由于集成了多个决策树,其预测结果会更准确,且不容易造成过拟合现象,泛化能力更强.</li>
+</ol>
+<h2 id="2-随机森林模型应用步骤——股票涨跌预测模型"><a href="#2-随机森林模型应用步骤——股票涨跌预测模型" class="headerlink" title="2. 随机森林模型应用步骤——股票涨跌预测模型"></a>2. 随机森林模型应用步骤——股票涨跌预测模型</h2><ol>
+<li>股票基本数据获取</li>
+<li>股票衍生变量生成</li>
+<li>划分特征向量与目标变量——找出X与y的全部数据***(注意:这里的 X划分时需要按照时间序列进行,而不是像其他模型那样用train_test_split()函数来进行随机划分,因为股票的变化趋势具有时间性特征,而随机划分会破坏这种特征,所以需要根据当天股价数据预测下一天的股价涨跌情况,而不能根据任意一天的股价数据预测下一天的股价涨跌情况.但是!对于其他的需求,也就是非股票类的模型的需求,还是按照正常的train_test_split()函数来进行划分)***</li>
+<li>划分训练集和测试集</li>
+<li>模型搭建: 用训练集来喂模型</li>
+<li>模型准确度检验: 用用测试集喂模型得出的结果与y_test做比较,得出训练器的准确度,越准确越好</li>
+</ol>
+<hr>
+<pre><code class="python">#1.引入之后需要用到的库
+import tushare as ts # 股票基本数据相关库
+import numpy as np # 科学计算相关库
+import pandas as pd # 科学计算相关库
+import talib # 股票衍生变量数据相关库
+import matplotlib.pyplot as plt # 引入绘图相关库
+from sklearn.ensemble import RandomForestClassifier # 引入分类决策树模型
+from sklearn.metrics import accuracy_score # 引入准确度评分函数
+
+#2.股票数据处理与衍生变量生成
+#股票基本数据获取
+df = ts.get_k_data(&#39;000002&#39;,start=&#39;2015-01-01&#39;)
+df = df.set_index(&#39;date&#39;) # 设置日期为索引
+#简单衍生变量构造
+df[&#39;close-open&#39;] = (df[&#39;close&#39;] - df[&#39;open&#39;])/df[&#39;open&#39;]
+df[&#39;high-low&#39;] = (df[&#39;high&#39;] - df[&#39;low&#39;])/df[&#39;low&#39;]
+df[&#39;pre_close&#39;] = df[&#39;close&#39;].shift(1) # 该列所有往下移一行形成昨日收盘价
+df[&#39;price_change&#39;] = df[&#39;close&#39;]-df[&#39;pre_close&#39;]
+df[&#39;p_change&#39;] = (df[&#39;close&#39;]-df[&#39;pre_close&#39;])/df[&#39;pre_close&#39;]*100
+#移动平均线相关数据构造
+df[&#39;MA5&#39;] = df[&#39;close&#39;].rolling(5).mean()
+df[&#39;MA10&#39;] = df[&#39;close&#39;].rolling(10).mean()
+df.dropna(inplace=True) # 删除空值
+#通过Ta_lib库构造衍生变量
+df[&#39;RSI&#39;] = talib.RSI(df[&#39;close&#39;], timeperiod=12) # 相对强弱指标
+df[&#39;MOM&#39;] = talib.MOM(df[&#39;close&#39;], timeperiod=5) # 动量指标
+df[&#39;EMA12&#39;] = talib.EMA(df[&#39;close&#39;], timeperiod=12) # 12日指数移动平均线
+df[&#39;EMA26&#39;] = talib.EMA(df[&#39;close&#39;], timeperiod=26) # 26日指数移动平均线
+df[&#39;MACD&#39;], df[&#39;MACDsignal&#39;], df[&#39;MACDhist&#39;] = talib.MACD(df[&#39;close&#39;], fastperiod=12, slowperiod=26, signalperiod=9) # MACD值
+df.dropna(inplace=True) # 删除空值
+
+#3.特征变量和目标变量提取
+X = df[[&#39;close&#39;, &#39;volume&#39;, &#39;close-open&#39;, &#39;MA5&#39;, &#39;MA10&#39;, &#39;high-low&#39;, &#39;RSI&#39;, &#39;MOM&#39;, &#39;EMA12&#39;, &#39;MACD&#39;, &#39;MACDsignal&#39;, &#39;MACDhist&#39;]]
+y = np.where(df[&#39;price_change&#39;].shift(-1)&gt; 0, 1, -1)
+
+#4.训练集和测试集数据划分
+X_length = X.shape[0] # shape属性获取X的行数和列数，shape[0]即表示行数
+split = int(X_length * 0.9)
+X_train, X_test = X[:split], X[split:]
+y_train, y_test = y[:split], y[split:]
+
+#5.参数调优
+from sklearn.model_selection import GridSearchCV # 网格搜索合适的超参数
+# 指定分类器中参数的范围
+parameters = &#123;&#39;n_estimators&#39;:[5, 10, 20], &#39;max_depth&#39;:[2, 3, 4, 5], &#39;min_samples_leaf&#39;:[5, 10, 20, 30]&#125;
+new_model = RandomForestClassifier(random_state=1) # 构建分类器
+grid_search = GridSearchCV(new_model, parameters, cv=6, scoring=&#39;accuracy&#39;) # cv=6表示交叉验证6次，scoring=&#39;roc_auc&#39;表示以ROC曲线的AUC评分作为模型评价准则, 默认为&#39;accuracy&#39;, 即按准确度评分
+grid_search.fit(X_train, y_train) # 传入数据
+grid_search.best_params_ # 输出参数的最优值
+
+#6.根据最优参数搭建模型
+model = RandomForestClassifier(max_depth=3, n_estimators=10, min_samples_leaf=10, random_state=1)
+model.fit(X_train, y_train)
+
+#7.模型使用与评估
+y_pred = model.predict(X_test)
+score = accuracy_score(y_pred, y_test)
+print(score)
+
+#8.收益回测曲线绘制
+X_test[&#39;prediction&#39;] = model.predict(X_test)
+X_test[&#39;p_change&#39;] = (X_test[&#39;close&#39;] - X_test[&#39;close&#39;].shift(1)) / X_test[&#39;close&#39;].shift(1)
+X_test[&#39;origin&#39;] = (X_test[&#39;p_change&#39;] + 1).cumprod()
+X_test[&#39;strategy&#39;] = (X_test[&#39;prediction&#39;].shift(1) * X_test[&#39;p_change&#39;] 
+</code></pre>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+      <div class="like-author">
+  <input type="checkbox" id="likeCode" />
+  <div class="author-face">
+    <img height="100px"
+         width="100px"
+         id="front-face"
+         alt="author face"
+         src="/images/IMG_5172.JPG# 头像图片"/>
+    <img height="100px"
+         width="100px"
+         id="back-face"
+         alt="like code"
+         src="/images/IMG_3538.jpg# 支付码图片"/>
+  </div>
+  <div class="like-text">“请作者喝杯咖啡”</div>
+  <label for="likeCode" class="like-btn">
+    <svg viewBox="0 0 1024 1024"
+         width="20px"
+         style="margin-right: 10px"
+         height="20px">
+      <path d="M466.88 908.96L113.824 563.296a270.08 270.08 0 0 1 0-387.392c108.8-106.56 284.896-106.56 393.696 0 1.504 1.472 2.976 2.944 4.448 4.48 1.472-1.536 2.944-3.008 4.448-4.48 108.8-106.56 284.896-106.56 393.696 0a269.952 269.952 0 0 1 34.016 347.072l-387.392 385.6a64 64 0 0 1-89.92 0.384z" p-id="13650" fill="#ee4242"/>
+    </svg>
+    喜欢作者
+  </label>
+</div>
+
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2020/07/20/AdaBoost%E4%B8%8EGBDT/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>机器学习算法——AdaBoost与GBDT模型</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2019/10/20/%E5%8C%97%E5%A4%A7%E9%87%91%E8%9E%8D%E5%AD%A6/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      北大金融学课笔记
+    </a>
+  
+</div>
+
+    
+      <div class="related-post">
+  <div class="related__head">
+  
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="post-tag">#机器学习</a>
+  
+    <a href="/tags/%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B/" class="post-tag">#分类模型</a>
+  
+    <a href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0%E6%A8%A1%E5%9E%8B/" class="post-tag">#集成学习模型</a>
+  
+    <a href="/tags/%E5%9B%9E%E5%BD%92%E6%A8%A1%E5%9E%8B/" class="post-tag">#回归模型</a>
+  
+    <a href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97%E6%A8%A1%E5%9E%8B/" class="post-tag">#随机森林模型</a>
+  
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/2020/07/20/AdaBoost与GBDT/" title="机器学习算法——AdaBoost与GBDT模型" rel="bookmark">机器学习算法——AdaBoost与GBDT模型</a></div></div><div class="null-item"><div class="null-title"><a href="/2021/01/20/决策树/" title="机器学习算法——决策树" rel="bookmark">机器学习算法——决策树</a></div></div><div class="null-item"><div class="null-title"><a href="/2020/09/20/逻辑回归/" title="机器学习算法——逻辑回归" rel="bookmark">机器学习算法——逻辑回归</a></div></div><div class="null-item"><div class="null-title"><a href="/2021/01/20/K近邻算法/" title="机器学习算法——K近邻算法" rel="bookmark">机器学习算法——K近邻算法</a></div></div><div class="null-item"><div class="null-title"><a href="/2022/02/20/AlexNet/" title="深度学习——卷积神经网络——AlexNet" rel="bookmark">深度学习——卷积神经网络——AlexNet</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">海</div><div class="matts">内</div><div class="matts">存</div><div class="matts">知</div><div class="matts">己</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">天</div><div class="matts">涯</div><div class="matts">若</div><div class="matts">比</div><div class="matts">邻</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">Theme Tranquility</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:jordanlee@stumail.hbu.edu.cn?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/Alchemiest">Alchemiest</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-wx.svg"/>
+                    <a class="foot-link" href="">松果篮</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/PNG图像 2.PNG"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://b23.tv/qb0poEj">科学炼丹</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:jordanlee@stumail.hbu.edu.cn">jordanlee@stumail.hbu.edu.cn</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="http://example.com">科学炼丹</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"Alchemiest# MUST HAVE, Your Github Username","admin":null,"repo":"https://github.com/Alchemiest/Alchemiest.github.io# MUST HAVE, The name of the repo you use to store Gitment comments","clientID":"科学炼丹# MUST HAVE, Github client id for the Gitment","clientSecret":null,"distractionFreeMode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  param.id = location.pathname
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>

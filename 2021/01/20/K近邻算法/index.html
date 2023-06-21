@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <title>
+      
+        机器学习算法——K近邻算法 | 科学炼丹
+      
+    </title>
+    <meta name="description" content="由Hexo及华为云驱动"/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="/css/layout.css"/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css"/>
+
+  <meta name="generator" content="Hexo 6.3.0"></head>
+  <body>
+    <div class="head">
+      <div class="nav">
+        <a href="/" class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg" />
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-menu">
+          
+            
+              <a class="nav-menu-item" href="/ability_DA">数据分析</a>
+            
+              <a class="nav-menu-item" href="/ability_DL">深度学习</a>
+            
+              <a class="nav-menu-item" href="/award">学习经历</a>
+            
+              <a class="nav-menu-item" href="/honor">学术成就</a>
+            
+          
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">机器学习算法——K近邻算法</div>
+        <div class="post-info">
+          
+  
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="post-tag">#机器学习</a>
+  
+    <a href="/tags/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95/" class="post-tag">#聚类算法</a>
+  
+
+
+          <span class="post-date">2021-01-20</span>
+        </div>
+      </div>
+      <div id="postBody" class="post-content__body--toc">
+        <div id="tocAnchor" class="toc-anchor">
+          <ol id="toc" class="post-toc">
+            
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#K%E8%BF%91%E9%82%BB%E7%AE%97%E6%B3%95"><span class="toc-text">K近邻算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-K%E8%BF%91%E9%82%BB%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86"><span class="toc-text">1. K近邻算法原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-K%E8%BF%91%E9%82%BB%E7%AE%97%E6%B3%95%E2%80%94%E2%80%94%E5%9B%BE%E5%83%8F%E8%AF%86%E5%88%AB%E5%BA%94%E7%94%A8%E6%AD%A5%E9%AA%A4"><span class="toc-text">2. K近邻算法——图像识别应用步骤</span></a></li></ol></li></ol>
+            
+          </ol>
+        </div>
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>摘要: 本节内容主要讲述聚类算法领域的基础算法，K近邻算法，具体内容包括1. K近邻算法原理；2. K近邻算法——图像识别应用步骤</p>
+<span id="more"></span>
+<h1 id="K近邻算法"><a href="#K近邻算法" class="headerlink" title="K近邻算法"></a>K近邻算法</h1><h2 id="1-K近邻算法原理"><a href="#1-K近邻算法原理" class="headerlink" title="1. K近邻算法原理"></a>1. K近邻算法原理</h2><ol>
+<li>K近邻算法的原理:对于一个新的样本,K近邻算法的目的就是在已有数据当中寻找与它最相近的K个数据,或者说”离它最近“的K个数据,如果这K个数据大多数属于某个类别,则这个样本也属于这个类别</li>
+<li>判断两个数据的相似度的度量标准:两个数据的相似度就是这两个数据在n维空间下的欧式距离,距离越近则相似度越高,欧式距离公式为: $|AB| &#x3D; \sqrt{(X_1 - Y_1)^2 + (X_2 - Y_2)^2 +(X_3 - Y_3)^2 +\dots+(X_n - Y_n)^2 }$</li>
+<li>K近邻算法模型的原理是:先把train里面的数据按照一定的方式进行“打点”,并且标记好每一组数据是属于什么类别,也就是打好标签,一个模型训练完了就是把训练集的每一组数据的点都“打上去了”.之后,有了新的数据要判断这个数据属于哪一个类别,就是把这个新的数据也“打上去”,之前的train的点怎么打上去的,新的数据就怎么往上打,把新的数据打上去之后,按照这个新的数据周围最近的K个原本就在上面的点的标签的类别,哪个标签最多,这个新的点就属于哪个类别.</li>
+<li><em><strong>K近邻算法在图像识别方向的应用</strong></em>——K近邻算法对于简单的图像的识别:对于简单的图像的识别就是把所有的图片都切成一个一个的小的方块,把每一个方块中的图像按照颜色抽象为数字,之后把所有的行按照顺序,一行一行的拼接到第一个行的后面,这样就把一个数字的矩阵变成了一行数字的向量,通过计算两个向量之间的欧式距离,也就是上文当中所叙述的K近邻算法的原理,来计算这个新的向量与原本存在的最相似的K个点的每一个点的相似度,也就是和最近的K个点之间的欧式距离,在这K个点中,属于哪一个类别最多,那么这个新的点就属于哪个类别.<em>(注意,只有当这个K取的是1的时候才是离哪个点最近就是属于哪个点的类别,其他情况下都是算出来最近的K个点的距离,属于哪一个类别的<strong>多</strong>就属于哪个类别.)</em></li>
+</ol>
+<h2 id="2-K近邻算法——图像识别应用步骤"><a href="#2-K近邻算法——图像识别应用步骤" class="headerlink" title="2. K近邻算法——图像识别应用步骤"></a>2. K近邻算法——图像识别应用步骤</h2><ol>
+<li>图像预处理<ol>
+<li>图像二值化:<ol>
+<li>将二值化的二维矩阵转换为一维向量</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>划分特征向量与目标变量——找出X与y的全部数据***(注意:这里的 X是包含n维数据的特征向量!!!在实际的使用的时候就会发现,X通常表现的形式是Dataframe,这其实就是把m个n维向量拼在了一起,就成了Dataframe,也就是我们实际写代码的时候的一个要注意的点,在给X赋值的时候要有两层括号,实际上这就是相当于自己写了一个Dataframe,有时候直接从已有的Dataframe中截取出来X也是相同的道理)***</li>
+<li>划分训练集和测试集</li>
+<li>模型搭建: 用训练集来喂模型——K近邻</li>
+<li>模型准确度检验: 用用测试集喂模型得出的结果与y_test做比较,得出训练器的准确度,越准确越好——真正的模型效果的评估还是得间下面的模型效果评估专题部分,这里的这个单独用精确度来衡量并不有效——这里的模型性能的检验指的是对于[[单个模型的性能检验]]</li>
+</ol>
+<hr>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#导入数据</span></span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">df =pd.read_excel(<span class="string">&#x27;/Users/johnwick/Desktop/机器学习/第7章 K近邻算法/源代码汇总_Jupyter Notebook格式/手写字体识别.xlsx&#x27;</span>)</span><br><span class="line">X = df.drop(columns= <span class="string">&#x27;对应数字&#x27;</span>)</span><br><span class="line">y = df[<span class="string">&#x27;对应数字&#x27;</span>]</span><br><span class="line"><span class="comment">#划分训练集与测试集</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size= <span class="number">0.2</span>, random_state= <span class="number">123</span>)</span><br><span class="line"><span class="comment">#用数据喂模型</span></span><br><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsClassifier <span class="keyword">as</span> KNN</span><br><span class="line">knn = KNN(n_neighbors= <span class="number">5</span>)</span><br><span class="line">knn.fit(X_train, y_train)</span><br><span class="line">y_pred = knn.predict(X_test)</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score</span><br><span class="line">score = accuracy_score(y_pred, y_test)</span><br><span class="line"><span class="comment">#导入需要识别的图像</span></span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line">img = Image.<span class="built_in">open</span>(<span class="string">&#x27;/Users/johnwick/Desktop/机器学习/第7章 K近邻算法/源代码汇总_Jupyter Notebook格式/数字4.png&#x27;</span>)<span class="comment">#和pandas库读取Excel其实是相同的</span></span><br><span class="line">img = img.resize((<span class="number">32</span>, <span class="number">32</span>))<span class="comment">#这里指的是32*32像素</span></span><br><span class="line">img.show()</span><br><span class="line"><span class="comment">#图像预处理</span></span><br><span class="line">img = img.convert(<span class="string">&#x27;L&#x27;</span>)</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line">img_new = img.point(<span class="keyword">lambda</span> x: <span class="number">0</span> <span class="keyword">if</span> x &gt; <span class="number">128</span> <span class="keyword">else</span> <span class="number">1</span>)</span><br><span class="line">arr = np.array(img_new)</span><br><span class="line">arr_new = arr.reshape(<span class="number">1</span>, -<span class="number">1</span>)</span><br><span class="line"><span class="comment">#用模型对图像进行识别</span></span><br><span class="line">answer = knn.predict(arr_new)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;图片中数字为: &#x27;</span> + <span class="built_in">str</span>(answer[<span class="number">0</span>]))</span><br></pre></td></tr></table></figure>
+
+      </div>
+    </div>
+  </article>
+  <div class="post__foot">
+    
+      <div class="like-author">
+  <input type="checkbox" id="likeCode" />
+  <div class="author-face">
+    <img height="100px"
+         width="100px"
+         id="front-face"
+         alt="author face"
+         src="/images/IMG_5172.JPG# 头像图片"/>
+    <img height="100px"
+         width="100px"
+         id="back-face"
+         alt="like code"
+         src="/images/IMG_3538.jpg# 支付码图片"/>
+  </div>
+  <div class="like-text">“请作者喝杯咖啡”</div>
+  <label for="likeCode" class="like-btn">
+    <svg viewBox="0 0 1024 1024"
+         width="20px"
+         style="margin-right: 10px"
+         height="20px">
+      <path d="M466.88 908.96L113.824 563.296a270.08 270.08 0 0 1 0-387.392c108.8-106.56 284.896-106.56 393.696 0 1.504 1.472 2.976 2.944 4.448 4.48 1.472-1.536 2.944-3.008 4.448-4.48 108.8-106.56 284.896-106.56 393.696 0a269.952 269.952 0 0 1 34.016 347.072l-387.392 385.6a64 64 0 0 1-89.92 0.384z" p-id="13650" fill="#ee4242"/>
+    </svg>
+    喜欢作者
+  </label>
+</div>
+
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2021/12/20/%E8%8D%A3%E8%AA%89%E9%87%8D%E5%A4%A7/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>加快构建开放型经济新体制研究</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2021/01/20/%E5%86%B3%E7%AD%96%E6%A0%91/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596"/>
+        </svg>
+      </div>
+      机器学习算法——决策树
+    </a>
+  
+</div>
+
+    
+      <div class="related-post">
+  <div class="related__head">
+  
+    <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="post-tag">#机器学习</a>
+  
+    <a href="/tags/%E8%81%9A%E7%B1%BB%E7%AE%97%E6%B3%95/" class="post-tag">#聚类算法</a>
+  
+
+</div>
+  <div class="realated__body">
+    
+      <div class="null"><div class="null-item"><div class="null-title"><a href="/2020/07/20/AdaBoost与GBDT/" title="机器学习算法——AdaBoost与GBDT模型" rel="bookmark">机器学习算法——AdaBoost与GBDT模型</a></div></div><div class="null-item"><div class="null-title"><a href="/2021/01/20/决策树/" title="机器学习算法——决策树" rel="bookmark">机器学习算法——决策树</a></div></div><div class="null-item"><div class="null-title"><a href="/2021/01/10/朴素神经网络/" title="机器学习算法——多层神经网络（MLP）" rel="bookmark">机器学习算法——多层神经网络（MLP）</a></div></div><div class="null-item"><div class="null-title"><a href="/2022/02/20/AlexNet/" title="深度学习——卷积神经网络——AlexNet" rel="bookmark">深度学习——卷积神经网络——AlexNet</a></div></div><div class="null-item"><div class="null-title"><a href="/2022/04/20/NiN/" title="深度学习——卷积神经网络——NiN" rel="bookmark">深度学习——卷积神经网络——NiN</a></div></div></div>
+    
+  </div>
+</div>
+
+    
+    
+      <div id="gitalk-container"></div>
+    
+  </div>
+
+    </div>
+    <div class="foot">
+      <div class="foot-inner">
+        <div class="foot__head">
+          
+            <div class="foot-line">
+              <div class="matts">海</div><div class="matts">内</div><div class="matts">存</div><div class="matts">知</div><div class="matts">己</div>
+            </div>
+          
+            <div class="foot-line">
+              <div class="matts">天</div><div class="matts">涯</div><div class="matts">若</div><div class="matts">比</div><div class="matts">邻</div>
+            </div>
+          
+        </div>
+        <div class="foot__body">
+          
+            <div class="foot-item">
+              <div class="foot-item__head">朋友</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link"
+                         height="20px"
+                         width="20px"
+                         src="/images/icon/icon-link.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">Theme Tranquility</a>
+                  </div>
+                
+                <div class="text">
+                  <img alt="link"
+                       height="20px"
+                       width="20px"
+                       src="/images/icon/icon-link+.svg"/>
+                  <a class="foot-link"
+                     href="mailto:jordanlee@stumail.hbu.edu.cn?subject=%E7%94%B3%E8%AF%B7%20Hozen.site%20%E7%9A%84%E5%8F%8B%E9%93%BE%E4%BD%8D%E7%BD%AE">
+                  申请友链</a>
+                </div>
+              </div>
+            </div>
+          
+          
+            <div class="foot-item">
+              <div class="foot-item__head">账号</div>
+              <div class="foot-item__body">
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-github.svg"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/Alchemiest">Alchemiest</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/logo-wx.svg"/>
+                    <a class="foot-link" href="">松果篮</a>
+                  </div>
+                
+                  <div class="text">
+                    <img alt="link" height="20px" width="20px" src="/images/PNG图像 2.PNG"/>
+                    <a class="foot-link" target="_blank" rel="noopener" href="https://b23.tv/qb0poEj">科学炼丹</a>
+                  </div>
+                
+              </div>
+            </div>
+          
+          <div class="foot-item">
+            <div class="foot-item__head">联系</div>
+            <div class="foot-item__body">
+              <div class="text">
+                <img alt="link"
+                     height="20px"
+                     width="20px"
+                     src="/images/icon/icon-email.svg"/>
+                <a class="foot-link" href="mailto:jordanlee@stumail.hbu.edu.cn">jordanlee@stumail.hbu.edu.cn</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="copyright">
+          <a href="http://example.com">科学炼丹</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+          <svg width="20" height="20" viewBox="0 0 725 725">
+            <path fill-rule="evenodd" fill="rgb(221, 221, 221)"
+            d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+            <path fill-rule="evenodd" fill="rgb(159, 159, 159)"
+            d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+            <path fill-rule="evenodd" fill="rgb(0, 0, 0)"
+            d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+          </svg>
+          <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+        </div>
+      </div>
+    </div>
+    
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+  const param = JSON.parse('{"enable":true,"owner":"Alchemiest# MUST HAVE, Your Github Username","admin":null,"repo":"https://github.com/Alchemiest/Alchemiest.github.io# MUST HAVE, The name of the repo you use to store Gitment comments","clientID":"科学炼丹# MUST HAVE, Github client id for the Gitment","clientSecret":null,"distractionFreeMode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":"zh-CN"}')
+  param.id = location.pathname
+  const gitalk = new Gitalk(param)
+  gitalk.render('gitalk-container')
+</script>
+
+  
+  
+    <script type="text/javascript" src=/js/toc.js></script>
+  
+
+  </body>
+</html>
